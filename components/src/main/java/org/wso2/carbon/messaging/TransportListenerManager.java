@@ -23,18 +23,30 @@ import java.util.Map;
 /**
  * This class is responsible for managing the transport listeners available.
  */
-public class TransportListenerManager implements TransportManagerMBean {
+public class TransportListenerManager {
 
     private Map<String, TransportListener> transports = new HashMap<>();
 
+    /**
+     * Register the given listener with the manager.
+     * @param transport transport listener instance to be registered.
+     */
     public void registerTransport(TransportListener transport) {
         transports.put(transport.getId(), transport);
     }
 
+    /**
+     * Un-register the given listener from the manager.
+     * @param transport transport listener instance to be unregistered.
+     */
     public void unregisterTransport(TransportListener transport) {
         transports.remove(transport.getId());
     }
 
+    /**
+     * Start the transport based on the given transport listener id.
+     * @param transportId transportListener id
+     */
     public void startTransport(String transportId) {
         TransportListener transport = transports.get(transportId);
         if (transport == null) {
@@ -44,6 +56,10 @@ public class TransportListenerManager implements TransportManagerMBean {
         transport.startTransport();
     }
 
+    /**
+     * Stop the transport based on the given transport listener id.
+     * @param transportId transportListener id
+     */
     public void stopTransport(String transportId) {
         TransportListener transport = transports.get(transportId);
         if (transport == null) {
@@ -53,35 +69,56 @@ public class TransportListenerManager implements TransportManagerMBean {
         transport.stopTransport();
     }
 
+    /**
+     * Start all the transport listeners registered with the manager.
+     */
     public void startTransports() {
         checkSecurity();
         transports.values()
                 .forEach(TransportListener::startTransport);
     }
 
+    /**
+     * Stop all the transport listeners registered with the manager.
+     */
     public void stopTransports() {
         checkSecurity();
         transports.values()
                 .forEach(TransportListener::stopTransport);
     }
 
+    /**
+     * Begin maintainance mode for all the transport listeners registered with the manager.
+     */
     public void beginMaintenance() {
         checkSecurity();
         transports.values()
                 .forEach(TransportListener::beginTransportMaintenance);
     }
 
+    /**
+     * End maintainance mode for all the transport listeners registered with the manager.
+     */
     public void endMaintenance() {
         checkSecurity();
         transports.values()
                 .forEach(TransportListener::endTransportMaintenance);
     }
 
+    /**
+     * Return all the transports registered.
+     * @return map of transport listener instances
+     */
     public Map<String, TransportListener> getTransports() {
         checkSecurity();
         return transports;
     }
 
+    /**
+     * Return a specific transport listener based of the given id.
+     * @param transportId transportListener id.
+     * @return transport listener instance.
+     */
     public TransportListener getTransport(String transportId) {
         return transports.get(transportId);
     }
@@ -90,7 +127,7 @@ public class TransportListenerManager implements TransportManagerMBean {
      * When the java security manager is enabled, the {@code checkSecurity} method can be used to protect/prevent
      * methods being executed by unsigned code.
      */
-    public void checkSecurity() {
+    private void checkSecurity() {
         SecurityManager secMan = System.getSecurityManager();
         if (secMan != null) {
             secMan.checkPermission(new ManagementPermission("control"));

@@ -23,7 +23,7 @@ package org.wso2.carbon.messaging;
  */
 public abstract class TransportListener {
     /**
-     * Unique ID representing a transport.
+     * Unique ID representing a transport listener.
      */
     protected String id;
 
@@ -61,6 +61,10 @@ public abstract class TransportListener {
         return id;
     }
 
+    /**
+     * Returns the running lifecycle state of this listener
+     * @return lifecycle state
+     */
     public TransportListener.State getState() {
         return state;
     }
